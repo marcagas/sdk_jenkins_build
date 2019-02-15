@@ -1,5 +1,5 @@
 FROM jenkinsci/jnlp-slave:3.26-1
-MAINTAINER Marc Agas <marc.agas@stellarloyalty.com>
+MAINTAINER Marc Agas <marc.agas@cheetahdigital.com>
 
 USER root
 RUN apt-get update
@@ -9,14 +9,11 @@ RUN apt-get install -y vim
 RUN apt-get install -y gnupg
 
 ENV NODE_VERSION=10.10.0
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash \
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash \
 	&& . $HOME/.nvm/nvm.sh \
 	&& nvm install $NODE_VERSION \
     && nvm alias default $NODE_VERSION \
-    && nvm use default \
-#    && npm install gulp-cli -g \
-#    && npm install gulp -D
-#    && npm install yarn -g
+    && nvm use default
 
 RUN apt-get install --assume-yes git
 
@@ -27,7 +24,6 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 RUN apt-get update && apt-get install -y yarn
-#RUN apt-get install --no-install-recommends -y yarn
 
 # Authorize SSH Host
 RUN mkdir -p /root/.ssh && \
@@ -36,6 +32,11 @@ RUN mkdir -p /root/.ssh && \
 
 COPY id_rsa /root/.ssh/
 
-RUN git clone git@github.com:LoyalSphere/stellar-js-sdk.git
+RUN git clone git@github.com:LoyalSphere/stellar-web-gb.git
+RUN cd stellar-web-gb && yarn install
 
-CMD echo 'done...'
+EXPOSE 8081
+
+RUN echo "Starging yarn..."
+
+CMD yarn run start
