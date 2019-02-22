@@ -19,4 +19,6 @@ RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.s
 	&& npm install gulp -D \
 	&& npm install yarn -g
 
+RUN apt-get install --assume-yes git
+
 CMD echo 'done ....' 
